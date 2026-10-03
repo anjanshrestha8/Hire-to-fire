@@ -10,6 +10,16 @@ const notificationRoute = require("./notification.route");
 const meetRoute = require("./meet.route");
 const messageRoute = require("./message.route");
 
+const candidateRoutes = require("./candidate.route");
+const jobRoutes = require("./job.route")
+const cvRoutes = require("./cv.route")
+const technicalInterviewRoutes = require("./technicalInterview.route");
+
+route.use("/candidates", candidateRoutes);
+route.use("/jobs", jobRoutes);
+route.use("/cv",cvRoutes);
+route.use("/technical-interview", technicalInterviewRoutes);
+
 route.use("/employee", employeeRoute);
 route.use("/user", userRoute);
 route.use("/department", departmentRoute);
