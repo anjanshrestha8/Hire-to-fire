@@ -1,6 +1,5 @@
 const { DataTypes } = require("sequelize");
-const sequelize = require("../config/db");
-const Candidate = require("./Candidate");
+const sequelize = require("../config/Database/dbConn");
 
 const AiScreening = sequelize.define(
   "AiScreenings",
