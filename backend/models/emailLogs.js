@@ -1,5 +1,5 @@
-const {DataTypes} = require("sequelize");
-const sequelize = require('../config/db');
+const { DataTypes } = require("sequelize");
+const sequelize = require("../config/Database/dbConn");
 
 const EmailLog = sequelize.define(
   "EmailLog",
