@@ -1,6 +1,5 @@
 const { DataTypes } = require("sequelize");
 const dbConnection = require("../config/Database/dbConn");
-const User = require("./user")
 
 const Team = dbConnection.define(
   "Department",
@@ -27,12 +26,6 @@ const Team = dbConnection.define(
     manager_id: {
       type: DataTypes.INTEGER,
       allowNull: true,
-      references: {
-        model: User,
-        key: "id",
-      },
-      onUpdate: "CASCADE",
-      onDelete: "RESTRICT",
     },
   },
   {

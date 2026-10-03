@@ -1,6 +1,5 @@
 const { DataTypes } = require("sequelize");
 const dbConnection = require("../config/Database/dbConn");
-const User = require("./user");
 
 const Notification = dbConnection.define(
   "Notification",
@@ -14,7 +13,7 @@ const Notification = dbConnection.define(
       type: DataTypes.INTEGER,
       allowNull: false,
       references: {
-        model: User,
+        model: "users",
         key: "id",
       },
     },
