@@ -1,6 +1,5 @@
 const { DataTypes } = require("sequelize");
 const dbConnection = require("../config/Database/dbConn");
-const User = require("./user");
 
 const Tasks = dbConnection.define(
   "Tasks",
@@ -22,7 +21,7 @@ const Tasks = dbConnection.define(
       type: DataTypes.INTEGER,
       allowNull: true,
       references: {
-        model: User,
+        model: "users",
         key: "id",
       },
       onUpdate: "CASCADE",
@@ -32,7 +31,7 @@ const Tasks = dbConnection.define(
       type: DataTypes.INTEGER,
       allowNull: true,
       references: {
-        model: User,
+        model: "users",
         key: "id",
       },
       onUpdate: "CASCADE",

@@ -1,7 +1,7 @@
 const { DataTypes } = require("sequelize");
 const dbConnection = require("../config/Database/dbConn");
 
-const User = require('./user');
+const User = require("./user");
 const Department = require("./department");
 const Designation = require("./designation");
 
@@ -17,7 +17,7 @@ const Employee = dbConnection.define(
       type: DataTypes.INTEGER,
       allowNull: true,
       references: {
-        model: User,
+        model: "users",
         key: "id",
       },
       onUpdate: "CASCADE",
@@ -27,7 +27,7 @@ const Employee = dbConnection.define(
       type: DataTypes.INTEGER,
       allowNull: true,
       references: {
-        model: Department,
+        model: "teams",
         key: "id",
       },
       onUpdate: "CASCADE",
@@ -37,7 +37,7 @@ const Employee = dbConnection.define(
       type: DataTypes.INTEGER,
       allowNull: true,
       references: {
-        model: Designation,
+        model: "designation",
         key: "id",
       },
       onUpdate: "CASCADE",

@@ -1,6 +1,5 @@
 const { DataTypes } = require("sequelize");
 const dbConnection = require("../config/Database/dbConn");
-const Team = require("./department");
 
 const User = dbConnection.define(
   "User",
@@ -48,26 +47,20 @@ const User = dbConnection.define(
       defaultValue: "active",
     },
     phoneNumber: {
-      type: DataTypes.INTEGER,
+      type: DataTypes.STRING(20),
       allowNull: false,
-      validate: { len: 10 },
+      validate: {
+        is: /^\d{10}$/,
+      },
       field: "phoneNumber",
     },
     department_id: {
       type: DataTypes.INTEGER,
-      allowNull: false,
-      references: {
-        model: "teams",
-        key: "id",
-      },
+      allowNull: true,
     },
     designation_id: {
       type: DataTypes.INTEGER,
-      allowNull: false,
-      references: {
-        model: "designation",
-        key: "id",
-      },
+      allowNull: true,
     },
   },
   {
