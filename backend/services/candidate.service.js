@@ -1,7 +1,7 @@
 require("dotenv").config();
 const { Candidate, Job, AiScreening } = require("../models/index");
 const sendMail = require("../utils/mailer");
-const screenCV = require("../services/aiScreeningService");
+const screenCV = require("../services/aiScreening.service");
 const ServiceError = require("../utils/serviceError");
 const {
   scheduleTechnicalAssessmentEmail,
@@ -47,7 +47,7 @@ const candidateService = {
       <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
         <h2 style="color: #6c757d;">New Candidate Application</h2>
         <p>A new candidate has applied for the position of <strong>${job.title}</strong> at <strong>${job.company}</strong>.</p>
-        
+
         <div style="background: #f8f9fa; padding: 16px; border-left: 4px solid #6c757d; border-radius: 6px; margin: 20px 0;">
           <p><strong>Candidate Name:</strong> ${name}</p>
           <p><strong>Position:</strong> ${job.title}</p>
@@ -517,7 +517,7 @@ const candidateService = {
         <p>Congratulations on passing the technical interview! You are now invited to the <strong>HR Interview</strong> for the position of <strong>${
           candidate.Job?.title
         }</strong> at <strong>${candidate.Job?.company}</strong>.</p>
-        
+
         <div style="background: #f8f9fa; padding: 20px; border-radius: 8px; margin: 20px 0; border-left: 4px solid #007bff;">
           <h3 style="margin-top: 0; color: #333;">Interview Details</h3>
           <p><strong>Date & Time:</strong> ${interviewDateTime}</p>
@@ -691,7 +691,7 @@ const candidateService = {
           <h2 style="color: #6c757d;">Application Update</h2>
           <p>Hi <strong>${candidate.name}</strong>,</p>
           <p>Thank you for your interest in the position of <strong>${candidate.Job?.title}</strong> at <strong>${candidate.Job?.company}</strong>.</p>
-          
+
           <div style="background: #f8f9fa; padding: 20px; border-radius: 8px; margin: 20px 0; border-left: 4px solid #6c757d;">
             <p>After careful review of your application, we have decided not to move forward with your candidacy at this time due to ${reasonText}.</p>
           </div>
@@ -753,7 +753,7 @@ const candidateService = {
           <h2 style="color: #6c757d;">Technical Interview Update</h2>
           <p>Hi <strong>${candidate.name}</strong>,</p>
           <p>Thank you for completing the technical interview for the position of <strong>${candidate.Job?.title}</strong> at <strong>${candidate.Job?.company}</strong>.</p>
-          
+
           <div style="background: #f8f9fa; padding: 20px; border-radius: 8px; margin: 20px 0; border-left: 4px solid #6c757d;">
             <p>After careful evaluation of your technical assessment, we have decided not to proceed with your application at this time due to ${reasonText}.</p>
           </div>
@@ -813,7 +813,7 @@ const candidateService = {
           <h2 style="color: #6c757d;">Final Interview Update</h2>
           <p>Hi <strong>${candidate.name}</strong>,</p>
           <p>Thank you for taking the time to interview for the position of <strong>${candidate.Job?.title}</strong> at <strong>${candidate.Job?.company}</strong>.</p>
-          
+
           <div style="background: #f8f9fa; padding: 20px; border-radius: 8px; margin: 20px 0; border-left: 4px solid #6c757d;">
             <h3 style="margin-top: 0; color: #333;">Interview Details</h3>
             <p>After careful consideration of all interview rounds, we have decided not to move forward with your application at this time due to ${reasonText}.</p>
