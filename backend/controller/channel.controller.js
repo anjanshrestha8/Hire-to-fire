@@ -1,56 +1,53 @@
-const Channel = require("../models/channel");
+const ServiceError = require("../utils/serviceError");
+const channelService = require("../services/channel.service");
 
 exports.getChannels = async (_req, res) => {
   try {
-    const channels = await Channel.findAll({
-      order: [["name", "ASC"]],
-    });
-
+    const channels = await channelService.getChannels();
     res.json(channels);
   } catch (err) {
+    if (err instanceof ServiceError) {
+      return res.status(err.statusCode).json(err.body);
+    }
     res.status(500).json({ error: "Failed to fetch channels" });
   }
 };
 
 exports.createChannel = (io) => async (req, res) => {
   try {
-    const { name } = req.body || {};
-    if (!name) return res.status(400).json({ error: "Missing name" });
-
-    const channel = await Channel.create({ name });
+    const channel = await channelService.createChannel(req.body || {});
     io.emit("channel:created", channel);
     res.status(201).json(channel);
   } catch (err) {
+    if (err instanceof ServiceError) {
+      return res.status(err.statusCode).json(err.body);
+    }
     res.status(500).json({ error: "Failed to create channel" });
   }
 };
 
 exports.updateChannel = (io) => async (req, res) => {
   try {
-    const { name } = req.body || {};
-    const [updated] = await Channel.update(
-      { name },
-      { where: { id: req.params.id }, returning: true }
-    );
-
-    if (!updated) return res.status(404).json({ error: "Not found" });
-
-    const channel = await Channel.findByPk(req.params.id);
+    const channel = await channelService.updateChannel(req.params.id, req.body || {});
     io.emit("channel:renamed", channel);
     res.json(channel);
   } catch (err) {
+    if (err instanceof ServiceError) {
+      return res.status(err.statusCode).json(err.body);
+    }
     res.status(500).json({ error: "Failed to update channel" });
   }
 };
 
 exports.deleteChannel = (io) => async (req, res) => {
   try {
-    const deleted = await Channel.destroy({ where: { id: req.params.id } });
-    if (!deleted) return res.status(404).json({ error: "Not found" });
-
+    await channelService.deleteChannel(req.params.id);
     io.emit("channel:deleted", req.params.id);
     res.sendStatus(204);
   } catch (err) {
+    if (err instanceof ServiceError) {
+      return res.status(err.statusCode).json(err.body);
+    }
     res.status(500).json({ error: "Failed to delete channel" });
   }
 };

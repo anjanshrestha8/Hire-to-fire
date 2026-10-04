@@ -1,16 +1,13 @@
-const Job = require('../models/index');
+const ServiceError = require('../utils/serviceError');
+const jobService = require('../services/job.service');
 
 exports.createJob = async (request, response) => {
   try {
-    const job = await Job.create(request.body);
-    response.status(200).json({
-      data: job,
-      message: 'Job is created sucessfully.',
-    });
+    const result = await jobService.createJob(request.body);
+    response.status(200).json(result);
   } catch (error) {
-    if (error.name === 'SequelizeValidationError') {
-      const errors = error.errors.map((e) => e.message);
-      return response.status(400).json({ errors });
+    if (error instanceof ServiceError) {
+      return response.status(error.statusCode).json(error.body);
     }
     response.status(500).json({ error: 'Internal server error.' });
   }
@@ -18,7 +15,7 @@ exports.createJob = async (request, response) => {
 
 exports.getAllJobs = async (request, response) => {
   try {
-    const jobs = await Job.findAll();
+    const jobs = await jobService.getAllJobs();
     if (jobs.length < 1) {
       response.status(200).json({
         data: [],
@@ -44,18 +41,12 @@ exports.getJobsById = async (request, response) => {
     });
   }
   try {
-    const job = await Job.findByPk(id);
-    if (!job) {
-      response.status(404).json({
-        data: [],
-        message: 'Job not found!!!!',
-      });
-    }
-    response.status(200).json({
-      data: job,
-      message: 'Jobs is found!!!!',
-    });
+    const result = await jobService.getJobById(id);
+    response.status(200).json(result);
   } catch (error) {
+    if (error instanceof ServiceError) {
+      return response.status(error.statusCode).json(error.body);
+    }
     response.status(500).json({ error: 'Internal server error.' });
   }
 };
@@ -68,25 +59,11 @@ exports.updateJob = async (request, response) => {
     });
   }
   try {
-    const [updatedRowsCount, updatedJobs] = await Job.update(request.body, {
-      where: { id: id },
-      returning: true,
-    });
-
-    if (updatedRowsCount === 0) {
-      response.status(404).json({
-        message: 'Job not found or no changes made.',
-      });
-    }
-
-    response.status(200).json({
-      data: updatedJobs[0],
-      message: 'Job updated successfully.',
-    });
+    const result = await jobService.updateJob(id, request.body);
+    response.status(200).json(result);
   } catch (error) {
-    if (error.name === 'SequelizeValidationError') {
-      const errors = error.errors.map((e) => e.message);
-      response.status(400).json({ errors });
+    if (error instanceof ServiceError) {
+      return response.status(error.statusCode).json(error.body);
     }
     response.status(500).json({ error: 'Internal server error.' });
   }
@@ -100,20 +77,12 @@ exports.deleteJob = async (request, response) => {
     });
   }
   try {
-    const deletedRowCount = await Job.destroy({
-      where: { id: id },
-    });
-
-    if (deletedRowCount === 0) {
-      return response.status(404).json({
-        message: 'Job not found.',
-      });
-    }
-
-    response.status(200).json({
-      message: 'Job deleted successfully.',
-    });
+    const result = await jobService.deleteJob(id);
+    response.status(200).json(result);
   } catch (error) {
+    if (error instanceof ServiceError) {
+      return response.status(error.statusCode).json(error.body);
+    }
     response.status(500).json({ error: 'Internal server error.' });
   }
 };

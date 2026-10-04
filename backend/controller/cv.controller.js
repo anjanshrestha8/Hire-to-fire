@@ -1,92 +1,14 @@
-require("dotenv").config();
-const { Candidate, Job, AiScreening } = require("../models/index");
-const sendMail = require("../utils/mailer");
-const screenCV = require("../services/aiScreeningService");
+const ServiceError = require("../utils/serviceError");
+const cvService = require("../services/cv.service");
 
 exports.approveCVAndSchedule = async (request, response) => {
-  const { id } = request.params;
-
   try {
-    const candidate = await Candidate.findByPk(id, {
-      include: {
-        model: Job,
-        attributes: ["title", "company"],
-      },
-    });
-
-    if (!candidate) {
-      return response.status(404).json({
-        error: "Candidate not found",
-      });
-    }
-
-    // Update candidate status to approved
-    await candidate.update({
-      cvStatus: "Passed",
-      currentRound: "Technical Interview",
-    });
-
-    // Calculate technical interview date (2 business days from today) at 11:30 AM
-    const today = new Date();
-    const techInterviewDate = new Date(today);
-    let addedDays = 0;
-    while (addedDays < 2) {
-      techInterviewDate.setDate(techInterviewDate.getDate() + 1);
-      const day = techInterviewDate.getDay();
-      if (day !== 0 && day !== 6) addedDays++;
-    }
-    techInterviewDate.setHours(11, 30, 0, 0); // 11:30 AM
-    const formattedDate = techInterviewDate.toLocaleString("en-US", {
-      weekday: "long",
-      year: "numeric",
-      month: "long",
-      day: "numeric",
-      hour: "numeric",
-      minute: "numeric",
-      hour12: true,
-    });
-
-    // Send congratulations email
-    await sendMail({
-      to: candidate.email,
-      subject: `Congratulations! CV Approved - ${
-        candidate.Job?.title || "Position"
-      }`,
-      html: `
-        <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
-          <h2 style="color: #28a745;">Congratulations!</h2>
-          <p>Hi <strong>${candidate.name}</strong>,</p>
-          <p>Great news! Your application for the position of <strong>${candidate.Job?.title}</strong> at <strong>${candidate.Job?.company}</strong> has passed our initial CV screening.</p>
-
-          <div style="background-color: #d4edda; padding: 20px; border-radius: 8px; margin: 20px 0; border-left: 4px solid #28a745;">
-            <h3 style="margin-top: 0; color: #155724;">Next Steps</h3>
-            <p>Your technical interview is scheduled on <strong>${formattedDate}</strong>. Please ensure you are ready at the scheduled time.</p>
-          </div>
-
-          <p><strong>What to expect:</strong></p>
-          <ul>
-            <li>Technical interview on <strong>${formattedDate}</strong></li>
-            <li>Take-home technical assessment</li>
-            <li>Clear instructions and timeline will be provided</li>
-          </ul>
-
-          <p>Thank you for your patience, and congratulations again on this important milestone!</p>
-          <p>Best regards,<br/>HR Team<br/><strong>${candidate.Job?.company}</strong></p>
-        </div>
-      `,
-    });
-
-    response.status(200).json({
-      message: "CV approved and congratulations email sent successfully",
-      data: {
-        candidateId: candidate.id,
-        cvStatus: "Passed",
-        currentRound: "Technical Interview",
-        techInterviewDate: formattedDate,
-        emailSent: true,
-      },
-    });
+    const result = await cvService.approveCVAndSchedule(request.params.id);
+    response.status(200).json(result);
   } catch (error) {
+    if (error instanceof ServiceError) {
+      return response.status(error.statusCode).json(error.body);
+    }
     console.error("Approve CV and schedule error:", error);
     response.status(500).json({ error: "Failed to approve CV and send email" });
   }
@@ -94,43 +16,13 @@ exports.approveCVAndSchedule = async (request, response) => {
 
 exports.runAIScreening = async (request, response) => {
   try {
-    const { id } = request.params;
-
-    const candidate = await Candidate.findByPk(id);
-    if (!candidate)
-      return response.status(404).json({ error: "Candidate not found" });
-
-    const aiResult = await screenCV(candidate);
-
-    console.log(aiResult);
-
-    console.log(
-      aiResult.score,
-      aiResult.decision,
-      aiResult.strengths,
-      aiResult.weaknesses
-    );
-
-    const aiRecord = await AiScreening.create({
-      candidateId: candidate.id,
-      score: aiResult.score,
-      decision: aiResult.decision,
-      feedback: `Strengths: ${aiResult.strengths.join(
-        ", "
-      )} | Weaknesses: ${aiResult.weaknesses.join(", ")}`,
-    });
-
-    // Update candidate CV status
-    await candidate.update({
-      cvStatus: aiResult.decision === "Pass" ? "Passed" : "Failed",
-    });
-
-    response.status(200).json({
-      message: "AI screening completed",
-      aiRecord,
-    });
-  } catch (err) {
-    console.error(err);
-    response.status(500).json({ error: err.message });
+    const result = await cvService.runAIScreening(request.params.id);
+    response.status(200).json(result);
+  } catch (error) {
+    if (error instanceof ServiceError) {
+      return response.status(error.statusCode).json(error.body);
+    }
+    console.error(error);
+    response.status(500).json({ error: error.message });
   }
 };

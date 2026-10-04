@@ -12,29 +12,21 @@
 // }
 
 // module.exports = NotificationController;
-const Notification = require('../models/notifications');
+const ServiceError = require("../utils/serviceError");
+const notificationService = require("../services/notification.service");
 
 const NotificationController = {
     // Get notifications for logged-in user
     getMyNotifications: async (req, res) => {
         try {
-            const userId = req.user.userId; // From JWT token
-
-            const notifications = await Notification.findAll({
-                where: { user_id: userId },
-                order: [["createdAt", "DESC"]],
-                limit: 50
-            });
-
-            const unreadCount = notifications.filter(n => !n.is_read).length;
-
-            res.status(200).json({
-                success: true,
-                data: notifications,
-                unread_count: unreadCount
-            });
-
+            const result = await notificationService.getMyNotifications(
+                req.user.userId
+            );
+            res.status(200).json(result);
         } catch (error) {
+            if (error instanceof ServiceError) {
+                return res.status(error.statusCode).json(error.body);
+            }
             console.error('Error fetching notifications:', error);
             res.status(500).json({
                 success: false,
@@ -47,28 +39,15 @@ const NotificationController = {
     // Mark notification as read
     markAsRead: async (req, res) => {
         try {
-            const { id } = req.params;
-            const userId = req.user.userId;
-
-            const notification = await Notification.findOne({
-                where: { id, user_id: userId }
-            });
-
-            if (!notification) {
-                return res.status(404).json({
-                    success: false,
-                    message: 'Notification not found'
-                });
-            }
-
-            await notification.update({ is_read: true });
-
-            res.status(200).json({
-                success: true,
-                message: 'Notification marked as read'
-            });
-
+            const result = await notificationService.markAsRead(
+                req.params.id,
+                req.user.userId
+            );
+            res.status(200).json(result);
         } catch (error) {
+            if (error instanceof ServiceError) {
+                return res.status(error.statusCode).json(error.body);
+            }
             console.error('Error marking notification as read:', error);
             res.status(500).json({
                 success: false,
@@ -81,19 +60,14 @@ const NotificationController = {
     // Mark all notifications as read
     markAllAsRead: async (req, res) => {
         try {
-            const userId = req.user.userId;
-
-            await Notification.update(
-                { is_read: true },
-                { where: { user_id: userId, is_read: false } }
+            const result = await notificationService.markAllAsRead(
+                req.user.userId
             );
-
-            res.status(200).json({
-                success: true,
-                message: 'All notifications marked as read'
-            });
-
+            res.status(200).json(result);
         } catch (error) {
+            if (error instanceof ServiceError) {
+                return res.status(error.statusCode).json(error.body);
+            }
             console.error('Error marking all notifications as read:', error);
             res.status(500).json({
                 success: false,
