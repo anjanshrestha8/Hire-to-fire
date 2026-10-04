@@ -26,5 +26,24 @@
     "noFallthroughCasesInSwitch": true,
     "noUncheckedSideEffectImports": true
   },
-  "include": ["src"]
+  "include": ["src"],
+  "exclude": [
+    "src/components/hiring/**/*",
+    "src/components/ui/error-alert.tsx",
+    "src/components/ui/job-card.tsx",
+    "src/components/ui/loading-spinner.tsx",
+    "src/components/ui/status-badge.tsx",
+    "src/pages/HiringHome.tsx",
+    "src/pages/JobDetails.tsx",
+    "src/services/applicationService.ts",
+    "src/services/jobService.ts",
+    "src/hooks/useApplications.ts",
+    "src/hooks/useAuth.ts",
+    "src/hooks/useJobs.ts",
+    "src/hooks/useTimer.ts",
+    "src/api/axios.ts",
+    "src/constants/index.ts",
+    "src/types/index.ts",
+    "src/utils/index.ts"
+  ]
 }

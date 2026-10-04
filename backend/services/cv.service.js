@@ -1,7 +1,7 @@
 require("dotenv").config();
 const { Candidate, Job, AiScreening } = require("../models/index");
 const sendMail = require("../utils/mailer");
-const screenCV = require("./aiScreeningService");
+const screenCV = require("./aiScreening.service");
 const ServiceError = require("../utils/serviceError");
 
 async function approveCVAndSchedule(id) {
