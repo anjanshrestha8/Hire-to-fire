@@ -2,6 +2,7 @@ const bcrypt = require("bcrypt");
 const User = require("../models/user");
 const jwt = require("jsonwebtoken");
 const ServiceError = require("../utils/serviceError");
+const { Team, Designation } = require("../models/index.modal");
 
 async function registerUser(body) {
   const {
@@ -78,8 +79,75 @@ function refreshToken(req) {
   }
 }
 
+async function createSuperAdmin(body) {
+  const { email, password, first_name, last_name, phone } = body;
+
+  if (!email || !password || !first_name || !last_name) {
+    throw new ServiceError(400, {
+      error: "email, password, first_name, and last_name are required",
+    });
+  }
+
+  const resolvedPhone = phone;
+  if (!resolvedPhone) {
+    throw new ServiceError(400, { error: "phone is required" });
+  }
+
+  const existingUser = await User.findOne({ where: { email } });
+  if (existingUser) {
+    throw new ServiceError(409, { error: "Email already exists" });
+  }
+
+  const managementDept = await Team.findOne({
+    where: { name: "Management" },
+  });
+  if (!managementDept) {
+    throw new ServiceError(500, {
+      error: "Default Management department not found. Please run migrations.",
+    });
+  }
+
+  const managementDesignation = await Designation.findOne({
+    where: { title: "Management" },
+  });
+  if (!managementDesignation) {
+    throw new ServiceError(500, {
+      error: "Default Management designation not found. Please run migrations.",
+    });
+  }
+
+  const password_hash = await bcrypt.hash(password, 10);
+
+  const newUser = await User.create({
+    email,
+    password_hash,
+    first_name,
+    last_name,
+    role: "super_admin",
+    phoneNumber: resolvedPhone,
+    department_id: managementDept.id,
+    designation_id: managementDesignation.id,
+  });
+
+  return {
+    message: "Super admin created successfully",
+    user: {
+      id: newUser.id,
+      email: newUser.email,
+      first_name: newUser.first_name,
+      last_name: newUser.last_name,
+      role: newUser.role,
+      status: newUser.status,
+      phoneNumber: newUser.phoneNumber,
+      department_id: newUser.department_id,
+      designation_id: newUser.designation_id,
+    },
+  };
+}
+
 module.exports = {
   registerUser,
   loginUser,
   refreshToken,
+  createSuperAdmin,
 };

@@ -42,7 +42,7 @@ export default function Login() {
 
       setUser(userData);
 
-      if (userData.role === Roles.ADMIN) {
+      if (userData.role === Roles.SUPER_ADMIN || userData.role === Roles.ADMIN) {
         navigate("/");
       } else if (userData.role === Roles.EMPLOYEE) {
         navigate("/tasks");

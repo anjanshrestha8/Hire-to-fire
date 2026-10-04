@@ -37,6 +37,21 @@ const userController = {
     }
   },
 
+  createSuperAdmin: async (req, res) => {
+    try {
+      const result = await userService.createSuperAdmin(req.body);
+      return res.status(201).json(result);
+    } catch (error) {
+      if (error instanceof ServiceError) {
+        return res.status(error.statusCode).json(error.body);
+      }
+      console.error("Error creating super admin:", error);
+      return res
+        .status(500)
+        .json({ error: error.message || "Something went wrong." });
+    }
+  },
+
   RefreshToken: async (req, res) => {
     userService.refreshToken(req);
   },
@@ -76,6 +91,7 @@ const authMiddleware = {
       });
     }
   },
+
 };
 
 module.exports = {

@@ -1,4 +1,5 @@
 const Roles = {
+  SUPER_ADMIN: "super_admin",
   ADMIN: "admin",
   HR_MANAGER: "manager",
   EMPLOYEE: "employee",

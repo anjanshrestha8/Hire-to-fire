@@ -1,10 +1,5 @@
 import { RoleType } from "@/constants/role.constant";
-import {
-  createContext,
-  useContext,
-  useState,
-  type ReactNode,
-} from "react";
+import { createContext, useContext, useState, type ReactNode } from "react";
 
 interface IUser {
   id: number;

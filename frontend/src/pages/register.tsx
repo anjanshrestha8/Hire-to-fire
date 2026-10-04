@@ -78,7 +78,10 @@ export default function Register() {
 
         const userData = res.data;
 
-        if (userData.role === Roles.ADMIN) {
+        if (
+          userData.role === Roles.SUPER_ADMIN ||
+          userData.role === Roles.ADMIN
+        ) {
           navigate("/");
         } else if (userData.role === Roles.EMPLOYEE) {
           navigate("/task");
@@ -355,6 +358,9 @@ export default function Register() {
                       <SelectValue placeholder="Select your role" />
                     </SelectTrigger>
                     <SelectContent className="bg-gray-100">
+                      <SelectItem value="super_admin">
+                        {Roles.SUPER_ADMIN}
+                      </SelectItem>
                       <SelectItem value="admin">{Roles.ADMIN}</SelectItem>
                       <SelectItem value="employee">{Roles.EMPLOYEE}</SelectItem>
                       <SelectItem value="manager">
