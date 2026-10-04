@@ -42,7 +42,7 @@ module.exports = {
         defaultValue: "active",
       },
       phoneNumber: {
-        type: Sequelize.INTEGER,
+        type: Sequelize.STRING(20),
         allowNull: false,
       },
       department_id: {

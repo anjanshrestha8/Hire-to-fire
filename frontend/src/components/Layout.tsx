@@ -1,6 +1,5 @@
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
-import { Button } from "@/components/ui/button";
-import { Settings, LogOut } from "lucide-react";
+import { Settings, LogOut, Search, Bell, ChevronDown } from "lucide-react";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -29,53 +28,99 @@ export function Layout({
 
   return (
     <SidebarProvider>
-      <div className="min-h-screen flex w-full bg-secondary/30">
-        {/* Sidebar */}
+      <div
+        className="min-h-screen flex w-full bg-[#e8eef5]"
+        style={{
+          fontFamily:
+            '"Plus Jakarta Sans", ui-sans-serif, system-ui, sans-serif',
+        }}
+      >
         <AppSidebar />
 
-        {/* Main Content Area */}
-        <div className="flex-1 flex flex-col">
-          {/* Top Navigation Bar */}
+        <div className="flex-1 flex flex-col min-w-0">
           <header
-            className="h-16 flex items-center justify-between px-6 shadow-md"
-            style={{ backgroundColor: "oklch(80.9% 0.105 251.813)" }}
+            className="sticky top-0 z-20 flex h-16 shrink-0 items-center justify-between border-b border-[#e2e8f0] bg-white"
+            style={{ padding: "0 16px" }}
           >
-            <div className="flex items-center gap-4">
-              <SidebarTrigger className="text-white hover:scale-105 transition-transform" />
-              <h1 className="text-lg font-bold text-white tracking-wide">
-                WORK FUSION
+            {/* Left: menu + brand */}
+            <div className="flex items-center gap-3">
+              <SidebarTrigger />
+              <span
+                aria-hidden
+                className="h-5 w-px bg-[#d0d8e4]"
+              />
+              <h1
+                className="text-[1.05rem] font-semibold text-[#16325c]"
+                style={{ letterSpacing: "-0.02em", lineHeight: 1 }}
+              >
+                Work Fusion
               </h1>
             </div>
 
-            <div className="flex items-center gap-4">
-              {/* Settings Button */}
-              <Button
-                variant="ghost"
-                size="sm"
-                className="text-white hover:bg-white/10 rounded-xl transition"
+            {/* Right: search + actions + profile */}
+            <div className="flex items-center gap-3">
+              <label
+                className="relative hidden items-center sm:flex"
+                style={{ minWidth: 240 }}
               >
-                <Settings className="h-5 w-5" />
-              </Button>
+                <Search
+                  className="pointer-events-none absolute left-3 h-4 w-4 text-[#7b8da6]"
+                  strokeWidth={1.75}
+                />
+                <input
+                  type="search"
+                  placeholder="Search anything..."
+                  className="h-10 w-full rounded-full border border-[#dbe3ee] bg-white pl-9 pr-4 text-sm text-[#16325c] outline-none transition placeholder:text-[#9aabc0] focus:border-[#93c5fd] focus:ring-2 focus:ring-[#93c5fd]/35"
+                />
+              </label>
 
-              {/* User Dropdown */}
+              <button
+                type="button"
+                aria-label="Notifications"
+                className="relative flex h-9 w-9 items-center justify-center rounded-[8px] text-[#16325c] transition hover:bg-[#eef3f9]"
+              >
+                <Bell className="h-5 w-5" strokeWidth={1.75} />
+                <span className="absolute right-1.5 top-1.5 h-2 w-2 rounded-full bg-[#ef4444] ring-2 ring-white" />
+              </button>
+
+              <button
+                type="button"
+                aria-label="Settings"
+                className="flex h-9 w-9 items-center justify-center rounded-[8px] text-[#16325c] transition hover:bg-[#eef3f9]"
+              >
+                <Settings className="h-5 w-5" strokeWidth={1.75} />
+              </button>
+
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                  <button className="h-9 w-9 rounded-full bg-white/20 text-white font-bold flex items-center justify-center hover:bg-white/30 transition">
-                    {currentUser.charAt(0).toUpperCase()}
+                  <button
+                    type="button"
+                    className="flex items-center gap-2 rounded-[8px] py-1.5 pl-1.5 pr-2 transition hover:bg-[#eef3f9]"
+                  >
+                    <span className="flex h-8 w-8 items-center justify-center rounded-full bg-[#dbeafe] text-sm font-semibold text-[#16325c]">
+                      {currentUser.charAt(0).toUpperCase()}
+                    </span>
+                    <span className="hidden text-sm font-medium text-[#16325c] md:inline">
+                      {currentUser}
+                    </span>
+                    <ChevronDown
+                      className="hidden h-4 w-4 text-[#16325c] md:inline"
+                      strokeWidth={1.75}
+                    />
                   </button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent
-                  className="w-56 bg-white shadow-lg rounded-xl p-2"
+                  className="w-56 rounded-xl bg-white p-2 shadow-lg"
                   align="end"
                   forceMount
                 >
-                  <DropdownMenuItem className="cursor-pointer hover:bg-gray-100 rounded-md flex items-center gap-2">
+                  <DropdownMenuItem className="flex cursor-pointer items-center gap-2 rounded-md hover:bg-gray-100">
                     <Settings className="h-4 w-4 text-gray-600" />
                     Profile Settings
                   </DropdownMenuItem>
                   <Link to={"/login"}>
                     <DropdownMenuItem
-                      className="cursor-pointer text-red-600 hover:bg-red-50 rounded-md flex items-center gap-2"
+                      className="flex cursor-pointer items-center gap-2 rounded-md text-red-600 hover:bg-red-50"
                       onClick={() => {
                         localStorage.clear();
                       }}
@@ -89,7 +134,6 @@ export function Layout({
             </div>
           </header>
 
-          {/* Main Content with Flexible Spacing */}
           <main className={`flex-1 ${padding} overflow-auto`}>
             <div className={`${maxWidth} mx-auto ${spacing}`}>{children}</div>
           </main>

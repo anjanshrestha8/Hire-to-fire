@@ -9,7 +9,7 @@ import {
   type ReactNode,
 } from "react";
 import { Box, Flex, IconButton, Stack, Text } from "@chakra-ui/react";
-import { PanelLeft } from "lucide-react";
+import { Menu } from "lucide-react";
 
 type SidebarState = "expanded" | "collapsed";
 
@@ -56,11 +56,12 @@ export function SidebarTrigger(props: ComponentProps<typeof IconButton>) {
       variant="ghost"
       size="sm"
       onClick={toggle}
-      color="white"
-      _hover={{ bg: "whiteAlpha.200" }}
+      color="#16325c"
+      _hover={{ bg: "#eef3f9" }}
+      borderRadius="8px"
       {...props}
     >
-      <PanelLeft size={18} />
+      <Menu size={20} strokeWidth={1.75} />
     </IconButton>
   );
 }
@@ -81,11 +82,14 @@ export function Sidebar({
       as="aside"
       className={className}
       style={style}
-      w={state === "collapsed" ? "20" : "64"}
+      w={state === "collapsed" ? "5rem" : "16rem"}
       minH="100vh"
+      h="100vh"
+      flexShrink={0}
       transition="width 0.2s ease"
       display="flex"
       flexDirection="column"
+      overflow="hidden"
     >
       {children}
     </Box>
@@ -107,16 +111,18 @@ export function SidebarGroup({ children }: { children?: ReactNode }) {
 export function SidebarGroupLabel({
   children,
   className,
+  style,
 }: {
   children?: ReactNode;
   className?: string;
+  style?: CSSProperties;
 }) {
   return (
     <Text
       className={className}
+      style={style}
       fontSize="xs"
       fontWeight="semibold"
-      px="4"
       py="2"
     >
       {children}
@@ -127,16 +133,22 @@ export function SidebarGroupLabel({
 export function SidebarGroupContent({
   children,
   className,
+  style,
 }: {
   children?: ReactNode;
   className?: string;
+  style?: CSSProperties;
 }) {
-  return <Box className={className}>{children}</Box>;
+  return (
+    <Box className={className} style={style}>
+      {children}
+    </Box>
+  );
 }
 
 export function SidebarMenu({ children }: { children?: ReactNode }) {
   return (
-    <Stack as="ul" gap="1" listStyleType="none" m="0" p="0">
+    <Stack as="ul" gap="2" listStyleType="none" m="0" p="0">
       {children}
     </Stack>
   );

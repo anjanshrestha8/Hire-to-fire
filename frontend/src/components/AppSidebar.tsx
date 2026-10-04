@@ -1,13 +1,14 @@
 import { NavLink } from "react-router-dom";
 import {
   LayoutDashboard,
-  Users,
-  CheckSquare,
-  MessageSquare,
-  Video,
-  Code,
+  UsersRound,
   Building2,
-  Briefcase,
+  BadgeCheck,
+  ListTodo,
+  MessagesSquare,
+  Video,
+  Braces,
+  Users,
 } from "lucide-react";
 
 import {
@@ -34,7 +35,7 @@ const navigationItems = [
   {
     title: "Employees",
     url: "/employees",
-    icon: Users,
+    icon: UsersRound,
     allowedRoles: [Roles.ADMIN, Roles.HR_MANAGER],
   },
   {
@@ -46,19 +47,19 @@ const navigationItems = [
   {
     title: "Designations",
     url: "/designations",
-    icon: Briefcase,
+    icon: BadgeCheck,
     allowedRoles: [Roles.ADMIN, Roles.HR_MANAGER],
   },
   {
     title: "Tasks",
     url: "/tasks",
-    icon: CheckSquare,
+    icon: ListTodo,
     allowedRoles: [Roles.ADMIN, Roles.EMPLOYEE, Roles.HR_MANAGER],
   },
   {
     title: "Messages",
     url: "/messages",
-    icon: MessageSquare,
+    icon: MessagesSquare,
     allowedRoles: [Roles.ADMIN, Roles.EMPLOYEE],
   },
   {
@@ -70,7 +71,7 @@ const navigationItems = [
   {
     title: "Code Editor",
     url: "/code-editor",
-    icon: Code,
+    icon: Braces,
     allowedRoles: [Roles.ADMIN, Roles.EMPLOYEE],
   },
 ];
@@ -78,40 +79,79 @@ const navigationItems = [
 export function AppSidebar() {
   const { state } = useSidebar();
   const { user } = useAuth();
+  const isCollapsed = state === "collapsed";
 
   return (
     <Sidebar
-      className={`transition-all duration-300 ${
-        state === "collapsed" ? "w-20" : "w-64"
-      } shadow-lg text-white`}
-      style={{ backgroundColor: "oklch(80.9% 0.105 251.813)" }}
+      className={`app-sidebar flex flex-col text-[#e8eef6] shadow-2xl transition-all duration-300 ${
+        isCollapsed ? "w-20" : "w-64"
+      }`}
+      style={{
+        background:
+          "radial-gradient(120% 80% at 0% 0%, #16324f 0%, transparent 55%), linear-gradient(180deg, #0a1628 0%, #0d1f33 48%, #0b1829 100%)",
+        fontFamily: '"Plus Jakarta Sans", ui-sans-serif, system-ui, sans-serif',
+      }}
       collapsible="icon"
     >
       <SidebarContent>
-        {/* Logo Section */}
-        <div className="p-8 border-b border-white/20">
-          <div className="flex items-center gap-2">
-            <div className="w-10 h-10 bg-white/20 rounded-xl flex items-center justify-center shadow-md">
-              <Building2 className="w-6 h-6 text-white" />
-            </div>
-            {state !== "collapsed" && (
-              <div>
-                <h2 className="text-lg font-bold text-black">Work Fusion</h2>
-                {/* <p className="text-xs text-white/70">Management System</p> */}
+        {/* Logo */}
+        <div
+          className={`${isCollapsed ? "pb-6" : "pb-4"}`}
+          style={
+            isCollapsed
+              ? { paddingLeft: 8, paddingRight: 8, marginTop: 16 }
+              : { paddingLeft: 16, paddingRight: 16, marginTop: 16 }
+          }
+        >
+          <div
+            className={`flex items-center ${
+              isCollapsed ? "justify-center" : "gap-2"
+            }`}
+            style={{ minHeight: 44 }}
+          >
+            <div className="relative flex h-10 w-10 shrink-0 items-center justify-center">
+              <span
+                aria-hidden
+                className="absolute inset-0 rounded-full bg-[#38bdf8]/30 blur-md"
+              />
+              <div className="relative flex h-10 w-10 items-center justify-center rounded-full bg-gradient-to-br from-[#38bdf8] to-[#0ea5e9] shadow-[0_8px_24px_rgba(14,165,233,0.35)]">
+                <Users className="h-5 w-5 text-white" strokeWidth={2} />
               </div>
+            </div>
+            {!isCollapsed && (
+              <h2
+                className="text-[1.125rem] font-semibold text-white"
+                style={{
+                  lineHeight: 1,
+                  letterSpacing: "-0.02em",
+                  margin: 0,
+                }}
+              >
+                Work Fusion
+              </h2>
             )}
           </div>
         </div>
 
         {/* Navigation */}
         <SidebarGroup>
-          {state !== "collapsed" && (
-            <SidebarGroupLabel className="px-6 py-2 text-xs font-semibold text-white/60 uppercase tracking-wide">
+          {!isCollapsed && (
+            <SidebarGroupLabel
+              className="pb-2 pt-1 text-[10px] font-semibold uppercase tracking-[0.14em] text-[#6b849e]"
+              style={{ paddingLeft: 16, paddingRight: 16 }}
+            >
               Navigation
             </SidebarGroupLabel>
           )}
 
-          <SidebarGroupContent className="px-4 py-2">
+          <SidebarGroupContent
+            className="pb-2"
+            style={
+              isCollapsed
+                ? { paddingLeft: 8, paddingRight: 8 }
+                : { paddingLeft: 16, paddingRight: 16 }
+            }
+          >
             <SidebarMenu>
               {navigationItems
                 .filter(
@@ -123,16 +163,36 @@ export function AppSidebar() {
                     <NavLink
                       to={item.url}
                       end
+                      style={{
+                        padding: isCollapsed ? "18px 8px" : "4px 16px",
+                        gap: 8,
+                        borderRadius: 8,
+                      }}
                       className={({ isActive }) =>
-                        `flex items-center gap-3 px-4 py-2 rounded-lg transition-all duration-200 text-sm font-medium ${
+                        `group flex items-center text-[13.5px] tracking-[-0.01em] transition-all duration-200 ${
+                          isCollapsed ? "justify-center" : ""
+                        } ${
                           isActive
-                            ? "bg-white/20 shadow-md text-white scale-[1.02]"
-                            : "text-white/70 hover:text-white hover:bg-black/20"
+                            ? "bg-[#1d9bf0] font-semibold text-white shadow-[0_10px_24px_rgba(29,155,240,0.32)]"
+                            : "font-medium text-[#a8b9cc] hover:bg-[#15263a] hover:text-[#f1f5f9]"
                         }`
                       }
                     >
-                      <item.icon className="h-5 w-5 flex-shrink-0" />
-                      {state !== "collapsed" && <span>{item.title}</span>}
+                      {({ isActive }) => (
+                        <>
+                          <item.icon
+                            className={`h-[18px] w-[18px] shrink-0 transition-colors ${
+                              isActive
+                                ? "text-white"
+                                : "text-[#7f95ad] group-hover:text-[#dbe7f3]"
+                            }`}
+                            strokeWidth={isActive ? 2.25 : 1.75}
+                            fill={isActive ? "currentColor" : "none"}
+                            fillOpacity={isActive ? 0.18 : 0}
+                          />
+                          {!isCollapsed && <span>{item.title}</span>}
+                        </>
+                      )}
                     </NavLink>
                   </SidebarMenuItem>
                 ))}
@@ -141,10 +201,17 @@ export function AppSidebar() {
         </SidebarGroup>
       </SidebarContent>
 
-      {/* Footer */}
-      <div className="mt-auto px-4 py-4 border-t border-white/20">
-        {state !== "collapsed" && (
-          <p className="text-xs text-white/60">© 2025 Work Fusion</p>
+      <div
+        className={`mt-auto border-t border-white/5 pb-5 pt-4 ${
+          isCollapsed ? "px-2" : "px-5"
+        }`}
+      >
+        {!isCollapsed ? (
+          <p className="text-center text-[11px] font-medium tracking-wide text-[#5f758c]">
+            © {new Date().getFullYear()} Work Fusion
+          </p>
+        ) : (
+          <div className="mx-auto h-1.5 w-1.5 rounded-full bg-[#38bdf8]/50" />
         )}
       </div>
     </Sidebar>

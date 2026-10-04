@@ -13,6 +13,7 @@ import VideoCalls from "./pages/VideoCalls";
 import Designations from "./pages/Designation";
 import CodeEditor from "./pages/CodeEditor";
 import ProtectedRoute from "./components/ProtectedRoute";
+import Roles from "./constants/role.constant";
 
 const queryClient = new QueryClient();
 
@@ -25,14 +26,22 @@ const App = () => (
       <Route path="*" element={<NotFound />} />
       <Route
         path="/"
-        element={<ProtectedRoute allowedRoles={["admin", "manager"]} />}
+        element={
+          <ProtectedRoute
+            allowedRoles={[Roles.ADMIN, Roles.HR_MANAGER]}
+          />
+        }
       >
         <Route index element={<Dashboard />} />
       </Route>
 
       <Route
         path="/employees"
-        element={<ProtectedRoute allowedRoles={["admin", "manager"]} />}
+        element={
+          <ProtectedRoute
+            allowedRoles={[Roles.ADMIN, Roles.HR_MANAGER]}
+          />
+        }
       >
         <Route index element={<Employees />} />
       </Route>
@@ -40,7 +49,9 @@ const App = () => (
       <Route
         path="/tasks"
         element={
-          <ProtectedRoute allowedRoles={["admin", "manager", "employee"]} />
+          <ProtectedRoute
+            allowedRoles={[Roles.ADMIN, Roles.HR_MANAGER, Roles.EMPLOYEE]}
+          />
         }
       >
         <Route index element={<Tasks />} />
@@ -48,35 +59,49 @@ const App = () => (
 
       <Route
         path="/departments"
-        element={<ProtectedRoute allowedRoles={["admin", "manager"]} />}
+        element={
+          <ProtectedRoute
+            allowedRoles={[Roles.ADMIN, Roles.HR_MANAGER]}
+          />
+        }
       >
         <Route index element={<Departments />} />
       </Route>
 
       <Route
         path="/messages"
-        element={<ProtectedRoute allowedRoles={["admin", "employee"]} />}
+        element={
+          <ProtectedRoute allowedRoles={[Roles.ADMIN, Roles.EMPLOYEE]} />
+        }
       >
         <Route index element={<Messages />} />
       </Route>
 
       <Route
         path="/designations"
-        element={<ProtectedRoute allowedRoles={["admin", "manager"]} />}
+        element={
+          <ProtectedRoute
+            allowedRoles={[Roles.ADMIN, Roles.HR_MANAGER]}
+          />
+        }
       >
         <Route index element={<Designations />} />
       </Route>
 
       <Route
         path="/video"
-        element={<ProtectedRoute allowedRoles={["admin", "employee"]} />}
+        element={
+          <ProtectedRoute allowedRoles={[Roles.ADMIN, Roles.EMPLOYEE]} />
+        }
       >
         <Route index element={<VideoCalls />} />
       </Route>
 
       <Route
         path="/code-editor"
-        element={<ProtectedRoute allowedRoles={["admin", "employee"]} />}
+        element={
+          <ProtectedRoute allowedRoles={[Roles.ADMIN, Roles.EMPLOYEE]} />
+        }
       >
         <Route index element={<CodeEditor />} />
       </Route>

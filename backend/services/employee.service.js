@@ -155,11 +155,27 @@ async function createSuperAdmin(body) {
     throw new ServiceError(400, { error: "phone is required" });
   }
 
-  console.log({ resolvedPhone });
-
   const existingUser = await User.findOne({ where: { email } });
   if (existingUser) {
     throw new ServiceError(409, { error: "Email already exists" });
+  }
+
+  const managementDept = await Team.findOne({
+    where: { name: "Management" },
+  });
+  if (!managementDept) {
+    throw new ServiceError(500, {
+      error: "Default Management department not found. Please run migrations.",
+    });
+  }
+
+  const managementDesignation = await Designation.findOne({
+    where: { title: "Management" },
+  });
+  if (!managementDesignation) {
+    throw new ServiceError(500, {
+      error: "Default Management designation not found. Please run migrations.",
+    });
   }
 
   const password_hash = await bcrypt.hash(password, 10);
@@ -171,8 +187,8 @@ async function createSuperAdmin(body) {
     last_name,
     role: "super_admin",
     phoneNumber: resolvedPhone,
-    department_id: null,
-    designation_id: null,
+    department_id: managementDept.id,
+    designation_id: managementDesignation.id,
   });
 
   return {
@@ -185,6 +201,8 @@ async function createSuperAdmin(body) {
       role: newUser.role,
       status: newUser.status,
       phoneNumber: newUser.phoneNumber,
+      department_id: newUser.department_id,
+      designation_id: newUser.designation_id,
     },
   };
 }
